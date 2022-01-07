@@ -1,13 +1,11 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import {
   IonApp,
   setupIonicReact,
-  IonButton,
   IonCol,
   IonContent,
   IonGrid,
   IonHeader,
-  IonIcon,
   IonInput,
   IonItem,
   IonLabel,
@@ -15,7 +13,9 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { calculatorOutline, refreshOutline } from "ionicons/icons";
+
+import BmiControls from "./components/BmiControls";
+import BmiResult from "./components/BmiResult";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -42,6 +42,8 @@ const App: React.FC = () => {
   const weightInputRef = useRef<HTMLIonInputElement>(null);
   const heightInputRef = useRef<HTMLIonInputElement>(null);
 
+  const [calculatedBMI, setCalculatedBMI] = useState<number>();
+
   const calculateBMI = () => {
     const enteredWeight = weightInputRef.current!.value;
     const enteredHeight = heightInputRef.current!.value;
@@ -51,7 +53,8 @@ const App: React.FC = () => {
     }
 
     const bmi = +enteredWeight / (+enteredHeight * +enteredHeight);
-    console.log(bmi);
+
+    setCalculatedBMI(bmi);
   };
 
   const resetInputs = () => {
@@ -84,23 +87,8 @@ const App: React.FC = () => {
               </IonRow>
             </IonCol>
           </IonRow>
-          <IonRow>
-            <IonCol className="ion-text-left">
-              <IonButton onClick={calculateBMI}>
-                <IonIcon slot="start" icon={calculatorOutline} />
-                Calculate
-              </IonButton>
-            </IonCol>
-            <IonCol className="ion-text-right">
-              <IonButton onClick={resetInputs}>
-                <IonIcon slot="start" icon={refreshOutline} />
-                Reset
-              </IonButton>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol></IonCol>
-          </IonRow>
+          <BmiControls onCalculate={calculateBMI} onReset={resetInputs} />
+          {calculatedBMI && <BmiResult result={calculatedBMI} />}
         </IonGrid>
       </IonContent>
     </IonApp>
